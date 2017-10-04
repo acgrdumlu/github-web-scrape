@@ -3,12 +3,24 @@ var fs = require('fs');
 const http = require('http');
 var cheerio = require('cheerio');
 const request = require('request');
+const bodyParser = require('body-parser');
 
 const app = express();
 
-app.get('/scrape', function (req, res) {
+app.use(bodyParser.urlencoded({ extended: false }));
 
-    url = 'http://www.github.com/acgrdumlu';
+app.set('view engine', 'pug');
+
+app.get('/', (req, res) => {
+    res.render('index');
+    // res.send(req.query.username);
+});
+
+app.get('/scrape?:username', function (req, res) {
+    const name  = req.query.username;
+    console.log(name);
+
+    url = `http://www.github.com/${name}`;
 
     request(url, function (error, response, html) {
         if (!error) {
